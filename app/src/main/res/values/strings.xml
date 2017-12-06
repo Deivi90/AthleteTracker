@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BlueT</string>
+
+    <string name="titulo_disp">Dispositivos Vinculados</string>
+
+    <string name="titulo_user">Enviar Dato</string>
+    <string name="boton1">Enviar 1</string>
+    <string name="boton2">Enviar 0</string>
+    <string name="boton3">DESCONECTAR</string>
+
+    <string name="boton4">Graficar</string>
+
+    <string name="title_activity_graf">graf</string>
+    <string name="title_activity_grafico">grafico</string>
+
+</resources>
