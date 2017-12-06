@@ -95,7 +95,7 @@ public class UserInterface extends AppCompatActivity {
                 MyConexionBT.write("1");
             }
         });
-
+//bvnbv
         IdApagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
