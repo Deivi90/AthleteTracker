@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,12 +34,8 @@ public class UserInterface extends AppCompatActivity {
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIn = new StringBuilder();
     private ConnectedThread MyConexionBT;
-
-
-    private double[] Data = new double[10];
-    //private List<Double> Data = new ArrayList<Double>();
-    // private ListIterator<Double> itData = Data.listIterator();
-    int DataIndex=0;
+    private double[] Data = new double[10]; // se guardan los ultimos 10 datos recibidos
+    int DataIndex=0;  // indice de los datos recibidos
     // Identificador unico de servicio
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private String address = null;
@@ -48,8 +43,10 @@ public class UserInterface extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_interface);
 
+        setContentView(R.layout.activity_user_interface); //Elijo el layout de la interfaz
+
+        // Defino cada uno de los elementos del layout
         IdEncender = (Button) findViewById(R.id.IdEncender);
         IdApagar = (Button) findViewById(R.id.IdApagar);
         IdDesconectar = (Button) findViewById(R.id.IdDesconectar);
@@ -62,12 +59,10 @@ public class UserInterface extends AppCompatActivity {
                 if (msg.what == handlerState) {
                     String readMessage = (String) msg.obj;
                     DataStringIn.append(readMessage);
-
-                    int endOfLineIndex = DataStringIn.indexOf("#"); //Uso el caracter # para separa los datos
-
+                    int endOfLineIndex = DataStringIn.indexOf("#"); //Uso el caracter # para separar los datos
                     if (endOfLineIndex > 0) {
                         String dataInPrint = DataStringIn.substring(0, endOfLineIndex);
-                        IdBufferIn.setText(dataInPrint); //**// Lo que llega por bluetooth lo mando al Idbufferin
+                        IdBufferIn.setText(dataInPrint); // Lo que llega por bluetooth lo mando al Idbufferin
                         DataStringIn.delete(0, DataStringIn.length());
                         //Se guardan los 10 ultimos datos recibidos para realizar el grafico
                         if(DataIndex < 10 )
@@ -86,7 +81,7 @@ public class UserInterface extends AppCompatActivity {
 
         };
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        VerificarEstadoBT();
+    //    VerificarEstadoBT();  Esto ya lo hice antes
 
         //Funcion de los botones
         IdEncender.setOnClickListener(new View.OnClickListener() {
@@ -95,14 +90,13 @@ public class UserInterface extends AppCompatActivity {
                 MyConexionBT.write("1");
             }
         });
-//bvnbv
+
         IdApagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MyConexionBT.write("0");
             }
         });
-
 
         IdDesconectar.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -123,9 +117,8 @@ public class UserInterface extends AppCompatActivity {
         IdGraficar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent graficoPantalla = new Intent(UserInterface.this, Grafico.class);
-                graficoPantalla.putExtra("DATA",Data);
+                Intent graficoPantalla = new Intent(UserInterface.this, Grafico.class);  // intent a la proxima activity
+                graficoPantalla.putExtra("DATA",Data);      // Datos para la siguiente activity
                 startActivity(graficoPantalla);
             }
         });
@@ -138,9 +131,10 @@ public class UserInterface extends AppCompatActivity {
 
     public void onResume()
     {
+        // https://developer.android.com/guide/topics/connectivity/bluetooth.html
         super.onResume();
-        Intent intent = getIntent();
-        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS); //**//
+        Intent intent = getIntent(); // Creo un intent para recuperar la data de la activity anterior
+        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS); // Recupero la data de la anterior activity
         BluetoothDevice device = btAdapter.getRemoteDevice(address);
         try
         {
@@ -148,7 +142,6 @@ public class UserInterface extends AppCompatActivity {
         } catch(IOException e){
             Toast.makeText(getBaseContext(),"La creacion del Socket fallo", Toast.LENGTH_LONG).show();
         }
-
         try {
             btSocket.connect();
 
@@ -158,8 +151,7 @@ public class UserInterface extends AppCompatActivity {
             }catch(IOException e2){}
         }
         MyConexionBT = new ConnectedThread(btSocket);
-        MyConexionBT.start();
-
+        MyConexionBT.start(); // Agregar algo para cuando la conexion falla.
     }
 
 
@@ -170,11 +162,9 @@ public class UserInterface extends AppCompatActivity {
         {
             btSocket.close();
         } catch (IOException e2){}
-
-
     }
 
-
+/*
     private void VerificarEstadoBT(){
         if(btAdapter == null) {
             Toast.makeText(getBaseContext(), " El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
@@ -187,18 +177,15 @@ public class UserInterface extends AppCompatActivity {
             }
         }
     }
-
+*/
 
     private class ConnectedThread extends Thread
     {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-
         public ConnectedThread(BluetoothSocket socket){
-
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-
             try
             {
                 tmpIn = socket.getInputStream();
@@ -212,15 +199,12 @@ public class UserInterface extends AppCompatActivity {
         {
             byte[] buffer = new byte[256];
             int bytes;
-
             while(true)
             {
                 try
                 {
-
                     bytes = mmInStream.read(buffer);
                     String readMessage = new String (buffer, 0 , bytes);
-
                     bluetoothIn.obtainMessage(handlerState, bytes, -1,readMessage).sendToTarget();
                 } catch (IOException e){
                     break;

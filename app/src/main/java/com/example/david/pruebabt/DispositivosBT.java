@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.util.Set;
 
-//**// Significa que se debe cambiar algo para que funcione en otra app
 
 public class DispositivosBT extends AppCompatActivity {
 
@@ -28,7 +27,7 @@ public class DispositivosBT extends AppCompatActivity {
     ListView IdLista;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();  //El adaptador Bt del celular
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;        //
+    private ArrayAdapter<String> mPairedDevicesArrayAdapter;    // Este array contiene la lista de dispositivos Bluetooth vinculados
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +39,15 @@ public class DispositivosBT extends AppCompatActivity {
     public void onResume(){
 
         super.onResume();
-        VerificarEstadoBT();
+        VerificarEstadoBT();    //Verifica si esta el Bluetooth disponible
 
-        // Este array contiene la lista de dispositivos Bluetooth vinculados
-        mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.nonmbre_dispositivos);  //*// Cambiar  nombre de layout
-
+        mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.nonmbre_dispositivos);
         //ListView muesttra los dispositivos vinculados
         IdLista = (ListView) findViewById(R.id.IdLista);
         IdLista.setAdapter(mPairedDevicesArrayAdapter);
         IdLista.setOnItemClickListener(mDeviceClickListener);
-
         //mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
         // Creo un set con los bluetooth detectados/emparejados.
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         if (pairedDevices.size() > 0){
@@ -60,7 +57,7 @@ public class DispositivosBT extends AppCompatActivity {
         }
     }
 
-    //Extrae la MAC
+    //Extrae la MAC cuando se elige un dispositivo de la lista.
     private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener()
     {
         public void onItemClick (AdapterView<?> av, View v, int arg2, long arg3)   //Ver
@@ -70,7 +67,7 @@ public class DispositivosBT extends AppCompatActivity {
             String address = info.substring(info.length() - 17);
 
             // Intent para ir al proxima activity
-            Intent UserInterfaceIntent = new Intent(DispositivosBT.this, UserInterface.class); //**// nombre de la clase en la que estoy y a la que voy
+            Intent UserInterfaceIntent = new Intent(DispositivosBT.this, UserInterface.class); // Intent a la siguiente activity
 
             UserInterfaceIntent.putExtra(EXTRA_DEVICE_ADDRESS, address);  // Envio a la proxima activity  la direccion del BT
             startActivity(UserInterfaceIntent);     //Voy a la proxima activity
@@ -80,6 +77,7 @@ public class DispositivosBT extends AppCompatActivity {
 
 
     private void VerificarEstadoBT(){
+    // Verifico que el dispositivo tenga Bluetooth
 
         //mBtAdapter =  BluetoothAdapter.getDefaultAdapter();
         if(mBtAdapter==null) {
@@ -89,18 +87,18 @@ public class DispositivosBT extends AppCompatActivity {
         }
         else {
             if (mBtAdapter.isEnabled()) {
-                // La depuracion avisa que ..
-                Log.d(TAG, "...Bluetooth Activado...");
+                // La depuracion avisa que:
+                Log.d(TAG, "...Bluetooth Activado..."); //Mensaje de depuracion
             } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE); //Intent para habilitar el bt
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE); //Intent para habilitar el bluetooth.
                 startActivityForResult(enableBtIntent,BLUETOOTH_CONNECTION_REQUEST); // Se inicia la actividad, se espera un resultado. 1 es el requestcode, capaz conviene ponerle un nombre
             }
         }
     }
 
 
-    // onActivityResult se ejecuta luego de ejecutar startActivityForResult
-    //Si no se acepto la conexion Bluetooth se cierra todo
+    // onActivityResult se ejecuta luego de ejecutar startActivityForResult (linea 96)
+    //Si no se acepto la conexion Bluetooth se cierra la app
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
