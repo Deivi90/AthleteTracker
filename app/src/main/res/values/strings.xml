@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BlueT</string>
+    <string name="app_name">AthleteTracker</string>
 
     <string name="titulo_disp">Dispositivos Vinculados</string>
 
