@@ -20,7 +20,7 @@ public class Grafico extends AppCompatActivity {
         double[] datos = ( double[]) getIntent().getSerializableExtra("DATA");
 
         series = new LineGraphSeries<DataPoint>();
-        //Log.d("Grafico","llega a OnCreate");
+        Log.i("Grafico","llega a OnCreate");
         double tiempo = -0.1;
         double aceleracion = 0;
         int i=0;

@@ -3,7 +3,7 @@
     package="com.example.david.pruebabt">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />  //con esta opcion se puede hacer el emparejamiento automatico VER
 
     <application
         android:allowBackup="true"

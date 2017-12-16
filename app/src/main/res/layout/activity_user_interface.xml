@@ -43,7 +43,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/IdApagar"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="49dp"
         android:text="Dato Rx:"
         android:textAlignment="textStart"

@@ -88,7 +88,7 @@ public class DispositivosBT extends AppCompatActivity {
         else {
             if (mBtAdapter.isEnabled()) {
                 // La depuracion avisa que:
-                Log.d(TAG, "...Bluetooth Activado..."); //Mensaje de depuracion
+                Log.i(TAG, "...Bluetooth Activado..."); //Mensaje de depuracion
             } else {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE); //Intent para habilitar el bluetooth.
                 startActivityForResult(enableBtIntent,BLUETOOTH_CONNECTION_REQUEST); // Se inicia la actividad, se espera un resultado. 1 es el requestcode, capaz conviene ponerle un nombre

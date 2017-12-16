@@ -24,14 +24,16 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.Vector;
 
+//https://developer.android.com/guide/topics/connectivity/bluetooth.html?hl=es-419
+
 public class UserInterface extends AppCompatActivity {
 
     Button IdEncender, IdApagar, IdDesconectar, IdGraficar;
     TextView IdBufferIn;
     Handler bluetoothIn;
     final int handlerState = 0;
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
+    private BluetoothAdapter btAdapter = null;      //Bluetooth local
+    private BluetoothSocket btSocket = null;        // Socket para la comm
     private StringBuilder DataStringIn = new StringBuilder();
     private ConnectedThread MyConexionBT;
     private double[] Data = new double[10]; // se guardan los ultimos 10 datos recibidos
@@ -81,7 +83,6 @@ public class UserInterface extends AppCompatActivity {
 
         };
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-    //    VerificarEstadoBT();  Esto ya lo hice antes
 
         //Funcion de los botones
         IdEncender.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +108,8 @@ public class UserInterface extends AppCompatActivity {
                     {
                         Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
                     }
-
+                    Intent DispositivosBTIntent = new Intent(UserInterface.this, DispositivosBT.class);
+                    startActivity(DispositivosBTIntent);
                 }
                 finish();
             }
@@ -124,6 +126,8 @@ public class UserInterface extends AppCompatActivity {
         });
     }
 
+
+    // El celular va funcionar como Master, por esto se debe crear el socket
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException
     {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
@@ -133,9 +137,14 @@ public class UserInterface extends AppCompatActivity {
     {
         // https://developer.android.com/guide/topics/connectivity/bluetooth.html
         super.onResume();
-        Intent intent = getIntent(); // Creo un intent para recuperar la data de la activity anterior
+
+      //  long inicialTime = System.currentTimeMillis();
+      //  long finalTime = 0;
+
+        Intent intent = getIntent(); // Creo un intent para recuperar la data de la activity anterior ///Deberia ir en onCreate//
         address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS); // Recupero la data de la anterior activity
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);    // dispositivo remoto a conectarse
+
         try
         {
             btSocket = createBluetoothSocket(device);
@@ -144,16 +153,23 @@ public class UserInterface extends AppCompatActivity {
         }
         try {
             btSocket.connect();
-
         } catch(IOException e){
             try{
+                Toast.makeText(getBaseContext(),"No se pudo establecer la conexión", Toast.LENGTH_LONG).show();
                 btSocket.close();
-            }catch(IOException e2){}
+                // Vuelvo a la activity que elige el Bluetooth
+                Intent DispositivosBTIntent = new Intent(UserInterface.this, DispositivosBT.class);
+                startActivity(DispositivosBTIntent);
+                finish();
+            }catch(IOException e2){
+               Toast.makeText(getBaseContext(),"No se cerro el Socket", Toast.LENGTH_LONG).show();
+            }
         }
         MyConexionBT = new ConnectedThread(btSocket);
         MyConexionBT.start(); // Agregar algo para cuando la conexion falla.
+       // finalTime = System.currentTimeMillis() - inicialTime;
+       // Log.i("tiempo", "valor: " + finalTime);
     }
-
 
     public void onPause()
     {
@@ -164,20 +180,7 @@ public class UserInterface extends AppCompatActivity {
         } catch (IOException e2){}
     }
 
-/*
-    private void VerificarEstadoBT(){
-        if(btAdapter == null) {
-            Toast.makeText(getBaseContext(), " El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
-        }
-        else {
-            if (btAdapter.isEnabled()) {
-            } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent,1);
-            }
-        }
-    }
-*/
+//https://developer.android.com/guide/topics/connectivity/bluetooth.html?hl=es-419
 
     private class ConnectedThread extends Thread
     {
