@@ -3,7 +3,11 @@
     package="com.example.david.athletetracker">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />  //con esta opcion se puede hacer el emparejamiento automatico VER
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />  <!--con esta opcion se puede hacer el emparejamiento automatico VER -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+
 
     <application
         android:allowBackup="true"
@@ -12,15 +16,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DispositivosBt">
+
+        <activity
+            android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".DispositivosBt" />
+
         <activity android:name=".UserInterface" />
-        <activity android:name=".Grafico"></activity>
+
+        <activity android:name=".Grafico">
+        </activity>
+
+        <activity
+            android:name=".VideoList">
+        </activity>
+
+        <activity android:name=".VideoPlay" />
+
+        <activity android:name=".CameraRecorder"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name="io.vov.vitamio.activity.InitActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
     </application>
 
 </manifest>

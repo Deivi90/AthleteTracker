@@ -1,16 +1,29 @@
 <resources>
     <string name="app_name">AthleteTracker</string>
 
-    <string name="titulo_disp">Dispositivos Vinculados</string>
 
+    <!--    DispositivosBt Activity  -->
+
+    <string name="titulo_disp">Dispositivos Disponibles</string>
+
+    <!--    User Interface Activity  -->
     <string name="titulo_user">Enviar Dato</string>
     <string name="boton1">Enviar 1</string>
     <string name="boton2">Enviar 0</string>
     <string name="boton3">DESCONECTAR</string>
-
     <string name="boton4">Graficar</string>
 
+    <!--    Graficos Activity  -->
     <string name="title_activity_graf">graf</string>
     <string name="title_activity_grafico">grafico</string>
+
+    <!--    Main Activity  -->
+    <string name="mainActivity_boton1">Grabar</string>
+    <string name="mainActivity_boton2">Reproducir</string>
+
+    <!--    Video List  -->
+    <string name="tittle_video_list_activity"> Capturas </string>
+
+
 
 </resources>

@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3a57b6</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#6db467</color>
+    <color name="colorPrimaryDark">#42793c</color>
+    <color name="colorAccent">#e88e51</color>
+    <color name="colorPrimaryBlueLight">#4883bf</color>
+    <color name="colorPrimaryBlue">#4475b2</color>
+    <color name="colorPrimaryDarkBlue">#365d89</color>
+    <color name="white">#fff</color>
+
+
 </resources>
+
+
+<!--
+
+4475b2
+4883bf
+365d89
+
+<color name="colorPrimary">#93c47d</color>
+<color name="colorPrimaryDark">#82b36b</color>
+<color name="colorAccent">#fdbb57</color>
+
+Combinacion triadica
+
+Verde
+6db467
+81db72
+42793c
+
+
+Naranja
+ed7d2a
+e88e51
+e26410
+
+Violeta
+5d438f
+6e5d99
+462e86
+
+Tetradas
+
+Naranja
+ed7d2a
+e88e51
+e26410
+
+Azul
+4475b2
+4883bf
+365d89
+
+Verde
+6db467
+81db72
+42793c
+
+Rosa
+e2257d
+d55495
+c00263
+
+
+-->

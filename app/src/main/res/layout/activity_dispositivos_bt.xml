@@ -10,11 +10,17 @@
         android:id="@+id/IdTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="19dp"
         android:text="@string/titulo_disp"
-        android:textSize="18sp" />
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/IdListaDispositivosBt"
@@ -22,6 +28,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/IdTitulo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="66dp" />
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/line"
+        android:dividerHeight="4dp" />
 
 </RelativeLayout>

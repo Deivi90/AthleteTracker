@@ -105,11 +105,8 @@ public class DispositivosBt extends AppCompatActivity {
         if(requestCode==BLUETOOTH_CONNECTION_REQUEST && resultCode == RESULT_CANCELED)
         {
             finish();   // Si se rechaza la conexion Bluetooth se finaliza la aplicacion
+            Toast.makeText(getBaseContext(),"No se activo el Bluetooth", Toast.LENGTH_LONG).show();
+
         }
     }
-
-
-
-
-
 }
