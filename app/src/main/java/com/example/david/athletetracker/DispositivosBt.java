@@ -27,7 +27,7 @@ public class DispositivosBt extends AppCompatActivity {
     ListView dispositivosBt;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();  //El adaptador Bt del celular
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;    // Este array contiene la lista de dispositivos Bluetooth vinculados
+    ArrayAdapter<String> mPairedDevicesArrayAdapter;    // Este array contiene la lista de dispositivos Bluetooth vinculados
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class DispositivosBt extends AppCompatActivity {
             String address = info.substring(info.length() - 17);
 
             // Intent para ir al proxima activity
-            Intent UserInterfaceIntent = new Intent(DispositivosBt.this, UserInterface.class); // Intent a la siguiente activity
+            Intent UserInterfaceIntent = new Intent(DispositivosBt.this, CameraRecorder.class); // Intent a la siguiente activity
 
             UserInterfaceIntent.putExtra(EXTRA_DEVICE_ADDRESS, address);  // Envio a la proxima activity  la direccion del BT
             startActivity(UserInterfaceIntent);     //Voy a la proxima activity

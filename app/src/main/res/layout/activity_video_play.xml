@@ -6,26 +6,29 @@
     tools:context="com.example.david.athletetracker.VideoPlay">
 
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <io.vov.vitamio.widget.VideoView
             android:id="@+id/videoView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true">
         </io.vov.vitamio.widget.VideoView>
 
         <ProgressBar
-            android:layout_gravity="center"
             android:id="@+id/proBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center" />
 
-    </FrameLayout>
-
+    </RelativeLayout>
 
 
 

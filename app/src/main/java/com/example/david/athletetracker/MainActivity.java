@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Defino un Popup que aparece cuando se apreta el boton Grabar
     public void ShowPopup(View v){
 
         TextView txtclose;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         btnBtDisable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                myDialog.dismiss();
                 Intent cameraIntent = new Intent(MainActivity.this, CameraRecorder.class); // Intent a la siguiente activity
                 startActivity(cameraIntent);     //Voy a la proxima activity
             }
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btnBtActivated.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                myDialog.dismiss();
                 Intent UserInterfaceIntent = new Intent(MainActivity.this, DispositivosBt.class); // Intent a la siguiente activity
                 startActivity(UserInterfaceIntent);     //Voy a la proxima activity
             }

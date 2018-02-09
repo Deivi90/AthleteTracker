@@ -42,6 +42,12 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".VideoProcessing"
+            android:screenOrientation="landscape" >
+        </activity>
+
+
+        <activity
             android:name="io.vov.vitamio.activity.InitActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:launchMode="singleTop"

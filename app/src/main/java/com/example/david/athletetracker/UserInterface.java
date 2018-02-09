@@ -21,15 +21,14 @@ import java.util.UUID;
 //https://developer.android.com/guide/topics/connectivity/bluetooth.html?hl=es-419
 
 public class UserInterface extends AppCompatActivity {
-
-    Button IdEncender, IdApagar, IdDesconectar, IdGraficar;
+/*
     TextView IdBufferIn;
     Handler bluetoothIn;
     final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;      //Bluetooth local
     private BluetoothSocket btSocket = null;        // Socket para la comm
     private StringBuilder DataStringIn = new StringBuilder();
-    private ConnectedThread MyConexionBT;
+    private ConnectedThread myConexionBt;
     private double[] Data = new double[10]; // se guardan los ultimos 10 datos recibidos
     int DataIndex=0;  // indice de los datos recibidos
     // Identificador unico de servicio
@@ -39,17 +38,11 @@ public class UserInterface extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_user_interface); //Elijo el layout de la interfaz
-
         // Defino cada uno de los elementos del layout
-        IdEncender = (Button) findViewById(R.id.IdEncender);
-        IdApagar = (Button) findViewById(R.id.IdApagar);
-        IdDesconectar = (Button) findViewById(R.id.IdDesconectar);
-        IdGraficar = (Button) findViewById(R.id.IdGraficar);
         IdBufferIn = (TextView) findViewById(R.id.IdBufferIn);
-
         //Manejo los datos que le llegan al bluetooth
+
         bluetoothIn = new Handler(){
             public void handleMessage(Message msg) {
                 if (msg.what == handlerState) {
@@ -73,65 +66,16 @@ public class UserInterface extends AppCompatActivity {
                     }
                 }
             }
+
         };
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        //Funcion de los botones
-        IdEncender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MyConexionBT.write("1");
-            }
-        });
-
-        IdApagar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MyConexionBT.write("0");
-            }
-        });
-
-        IdDesconectar.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if(btSocket != null)
-                {
-                    try{btSocket.close();}
-                    catch(IOException e)
-                    {
-                        Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
-                    }
-                    Intent DispositivosBtIntent = new Intent(UserInterface.this, DispositivosBt.class);
-                    startActivity(DispositivosBtIntent);
-                }
-                finish();
-            }
-        });
-
-
-        IdGraficar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent graficoPantalla = new Intent(UserInterface.this, Grafico.class);  // intent a la proxima activity
-                graficoPantalla.putExtra("DATA",Data);      // Datos para la siguiente activity
-                startActivity(graficoPantalla);
-            }
-        });
     }
 
-
-    // El celular va funcionar como Master, por esto se debe crear el socket
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException
-    {
-        return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-    }
 
     public void onResume()
     {
         // https://developer.android.com/guide/topics/connectivity/bluetooth.html
         super.onResume();
-
-      //  long inicialTime = System.currentTimeMillis();
-      //  long finalTime = 0;
 
         Intent intent = getIntent(); // Creo un intent para recuperar la data de la activity anterior ///Deberia ir en onCreate//
         address = intent.getStringExtra(DispositivosBt.EXTRA_DEVICE_ADDRESS); // Recupero la data de la anterior activity
@@ -139,7 +83,7 @@ public class UserInterface extends AppCompatActivity {
 
         try
         {
-            btSocket = createBluetoothSocket(device);
+            btSocket = device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         } catch(IOException e){
             Toast.makeText(getBaseContext(),"La creacion del Socket fallo", Toast.LENGTH_LONG).show();
         }
@@ -157,10 +101,8 @@ public class UserInterface extends AppCompatActivity {
                Toast.makeText(getBaseContext(),"No se cerro el Socket", Toast.LENGTH_LONG).show();
             }
         }
-        MyConexionBT = new ConnectedThread(btSocket);
-        MyConexionBT.start(); // Agregar algo para cuando la conexion falla.
-       // finalTime = System.currentTimeMillis() - inicialTime;
-       // Log.i("tiempo", "valor: " + finalTime);
+        myConexionBt = new ConnectedThread(btSocket);
+        myConexionBt.start(); // Agregar algo para cuando la conexion falla.
     }
 
     public void onPause()
@@ -174,6 +116,7 @@ public class UserInterface extends AppCompatActivity {
 
 //https://developer.android.com/guide/topics/connectivity/bluetooth.html?hl=es-419
 
+/*
     private class ConnectedThread extends Thread
     {
         private final InputStream mmInStream;
@@ -206,7 +149,6 @@ public class UserInterface extends AppCompatActivity {
                 }
             }
         }
-
         public void write(String input)
         {
             try {
@@ -216,5 +158,5 @@ public class UserInterface extends AppCompatActivity {
                 finish();
             }
         }
-    }
+    }*/
 }

@@ -46,7 +46,6 @@ public class VideoPlay extends AppCompatActivity{
     }
 
     private void init(){
-
         filePath = Environment.getExternalStorageDirectory() + "/Atlethe Tracker/" + getIntent().getStringExtra("filename");
         videoView = (VideoView) findViewById(R.id.videoView);
         proBar = (ProgressBar) findViewById(R.id.proBar);

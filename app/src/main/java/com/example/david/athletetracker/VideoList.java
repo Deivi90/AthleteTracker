@@ -20,15 +20,15 @@ import java.util.List;
 public class VideoList extends AppCompatActivity {
 
 
-    private String date;
-    private String time;
-    private String buffer;
+    String date;
+    String time;
+    String buffer;
     private  File path = new File(Environment.getExternalStorageDirectory() + "/Atlethe Tracker/");
     private  File[] files = path.listFiles();
 
 
 
-    private List<String> item = null;
+    List<String> item = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +37,7 @@ public class VideoList extends AppCompatActivity {
         item = new ArrayList<String>();
 
         //ver como ordenar por ultima fecha
-        for (int i = 0; i < files.length; i++)
+        for(int i = 0; i < files.length; i++)
         {
             File file = files[i];
             if (file.isDirectory()) // No hace falta
