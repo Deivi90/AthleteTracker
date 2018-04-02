@@ -60,6 +60,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
     private double velData = 0; // se guardan los ultimos 10 datos recibidos
     ArrayList<Double> velDataList = new ArrayList<Double>();
+    int contador= 0;
 
     // Identificador unico de servicio
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -113,8 +114,8 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
                         String dataInPrint = DataStringIn.substring(0, endOfLineIndex);
                         IdBufferIn.setText(dataInPrint); // Lo que llega por bluetooth lo mando al Idbufferin
                         velData = (Double.parseDouble(dataInPrint));
-                        DataStringIn.delete(0, DataStringIn.length());
                     }
+                    DataStringIn.delete(0, DataStringIn.length());
                 }
             }
 
@@ -151,6 +152,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
         Intent processIntent = new Intent(CameraRecorder.this, VideoProcessing.class);  // intent a la proxima activity
         processIntent.putExtra("path", filePath);
         processIntent.putExtra("velData", velDataList);
+        processIntent.putExtra("cont", contador);
         startActivity(processIntent);
     }
 
@@ -248,6 +250,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             Log.i(TAG, "onCameraFrame: recordFilePath" + filePath);
         }
         cameraVideo.write(mTemp);
+        contador++;
         if(address != null)
             velDataList.add(velData);
         return mTemp;

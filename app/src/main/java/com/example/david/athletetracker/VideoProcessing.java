@@ -22,13 +22,16 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 
 public class VideoProcessing extends Activity implements Runnable
 {
 
     String TAG = "VideoProcessing";
     Mat mBgra,imgHSV, imgThresholded, imgErode, imgDilat;
+    int frameIndex=0;
 
     VideoWriter cameraVideo;
     VideoCapture videoToProcess;
@@ -42,15 +45,18 @@ public class VideoProcessing extends Activity implements Runnable
     Double maxArea, Area;
     int index = 0 ;
     int maxAreaIndex = 0;
-    Scalar CONTOUR_COLOR = new Scalar(0,0,255,255);
+    Scalar CONTOUR_COLOR = new Scalar(255,155,235);
 
     // Inicianilaciones para graficar lineas
     Moments contourMoments;
     Double centerX;
     Double centerY;
-    Scalar LINE_COLOR = new Scalar(0,255,0,255);
+    Scalar LINE_COLOR = new Scalar(50,255,255);
     int CURVE_LENGHT = 30;
     Deque<Point> centerPoint = new ArrayDeque<>();
+    Deque<Double> velDataDeque = new ArrayDeque<>();
+    Iterator<Double> velDataIterator;
+
     Point initialPoint = new Point();
     Point finalPoint = new Point();
     int indexList = 0;
@@ -162,7 +168,7 @@ public class VideoProcessing extends Activity implements Runnable
 
     private  void processVideo(){
 
-        Double maxVel = 1.0;
+        Double maxVel = 10.0;
         mBgra = new Mat(480, 640, CvType.CV_8UC4);
         imgHSV = new Mat(480, 640, CvType.CV_8UC4);
         imgThresholded = new Mat(480, 640, CvType.CV_8UC4);
@@ -226,14 +232,23 @@ public class VideoProcessing extends Activity implements Runnable
             if (indexList < CURVE_LENGHT) {     // Se almacenan los puntos hasta que se llene la cola
                 centerPoint.addFirst(new Point(centerX, centerY));
                 indexList++;
+                if( ! velDataList.isEmpty())
+                    velDataDeque.addFirst(velDataList.get(frameIndex));
+
             }
             else{    // Si la cola esta llena, se borra el elemento mas viejo y luego se agrega uno nuevo
                 centerPoint.removeLast();
                 centerPoint.addFirst(new Point(centerX, centerY));
+                if( ! velDataList.isEmpty()){
+                    velDataDeque.removeLast();
+                    velDataDeque.addFirst(velDataList.get(frameIndex));
+                }
             }
 
 
             int centerIndex = 0 ;
+            if( ! velDataList.isEmpty())
+                velDataIterator = velDataDeque.iterator();
             // Graficos de los puntos en la cola
             for (Point center : centerPoint) {
                 finalPoint = center;
@@ -249,12 +264,15 @@ public class VideoProcessing extends Activity implements Runnable
                                 Imgproc.line(mBgra, initialPoint, finalPoint, LINE_COLOR, thickness);
                             else{
                                 // El color de la curva va de amarillo a rojo a medida que aumenta la velocidad
-                                velValue = velDataList.get(velIndex) * 255/maxVel; // La velocidad va de 0 a 255
+                                velValue = velDataIterator.next() * 255/maxVel; // La velocidad va de 0 a 255
                                 velValue = Math.abs(velValue - 255); // La velocidad va de 255 a 0
-                                Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50,velValue,255,255), thickness);
-                                velIndex++;
+                                Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50,velValue,255), thickness);
+                                //velIndex++;
                             }
 
+                    }
+                    else if(! velDataList.isEmpty()) {
+                        velValue = velDataIterator.next();
                     }
                     initialPoint = finalPoint;
                 }
@@ -264,6 +282,7 @@ public class VideoProcessing extends Activity implements Runnable
             // Se graba el video a un archivo
             cameraVideo.write(mBgra);
             mBgra.release();
+            frameIndex++;
         }
         cameraVideo.release();
         File tempFile = new File(filePath + "TEMP.avi");
