@@ -60,6 +60,9 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
     private double velData = 0; // se guardan los ultimos 10 datos recibidos
     ArrayList<Double> velDataList = new ArrayList<Double>();
+    ArrayList<Integer> velDataIndex = new ArrayList<>();
+
+
     int contador= 0;
 
     // Identificador unico de servicio
@@ -104,22 +107,24 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
         IdBufferIn = (TextView) findViewById(R.id.IdBufferIn);
 
-        bluetoothIn = new Handler(){
-            public void handleMessage(Message msg) {
+        //https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
+        bluetoothIn = new Handler(new Handler.Callback() {
+            public boolean handleMessage(Message msg) {
                 if (msg.what == handlerState) {
                     String readMessage = (String) msg.obj;
                     DataStringIn.append(readMessage);
-                    int endOfLineIndex = DataStringIn.indexOf("#"); //Uso el caracter # para separar los datos
-                    if (endOfLineIndex > 0) {
-                        String dataInPrint = DataStringIn.substring(0, endOfLineIndex);
-                        IdBufferIn.setText(dataInPrint); // Lo que llega por bluetooth lo mando al Idbufferin
+                    if(DataStringIn.charAt(DataStringIn.length() - 1) == '#'){ //Uso el caracter # para separar los datos
+                        String dataInPrint = DataStringIn.substring(0, DataStringIn.length() - 1);
+                        IdBufferIn.setText(dataInPrint);  // Lo que llega por bluetooth lo mando al Idbufferin
                         velData = (Double.parseDouble(dataInPrint));
+                        velDataList.add((Double.parseDouble(dataInPrint)));
+                        DataStringIn.delete(0, DataStringIn.length());
                     }
-                    DataStringIn.delete(0, DataStringIn.length());
                 }
+                return false;
             }
 
-        };
+        });
         btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
@@ -152,7 +157,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
         Intent processIntent = new Intent(CameraRecorder.this, VideoProcessing.class);  // intent a la proxima activity
         processIntent.putExtra("path", filePath);
         processIntent.putExtra("velData", velDataList);
-        processIntent.putExtra("cont", contador);
+        processIntent.putExtra("Index", velDataIndex);
         startActivity(processIntent);
     }
 
@@ -252,7 +257,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
         cameraVideo.write(mTemp);
         contador++;
         if(address != null)
-            velDataList.add(velData);
+            velDataIndex.add(velDataList.size()-1);
         return mTemp;
     }
 
@@ -282,7 +287,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
         public void run()
         {
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[1];
             int bytes;
             while(true)
             {

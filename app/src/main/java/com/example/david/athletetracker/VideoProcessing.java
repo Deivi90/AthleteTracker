@@ -20,6 +20,7 @@ import org.opencv.videoio.VideoWriter;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ import java.util.List;
 
 public class VideoProcessing extends Activity implements Runnable
 {
-    Mat mBgra,imgHSV, imgThresholded;
+    Mat mBgra,imgHSV, imgThresholded, finalMat, curveMat;
     int frameIndex=0;
 
     VideoWriter cameraVideo;
@@ -60,6 +61,7 @@ public class VideoProcessing extends Activity implements Runnable
     boolean firstIteration = false;
     String filePath;
     ArrayList<Double> velDataList = new ArrayList<Double>();
+    ArrayList<Integer> velDataIndex = new ArrayList<>();
 
 
     //A ProgressDialog View
@@ -77,6 +79,7 @@ public class VideoProcessing extends Activity implements Runnable
 
         filePath = getIntent().getStringExtra("path");
         velDataList = (ArrayList<Double>) getIntent().getSerializableExtra("velData");
+        velDataIndex = getIntent().getIntegerArrayListExtra("Index");
 
         //Create a new progress dialog.
         progressDialog = new ProgressDialog(VideoProcessing.this);
@@ -168,6 +171,16 @@ public class VideoProcessing extends Activity implements Runnable
         mBgra = new Mat(480, 640, CvType.CV_8UC4);
         imgHSV = new Mat(480, 640, CvType.CV_8UC4);
         imgThresholded = new Mat(480, 640, CvType.CV_8UC4);
+        curveMat = new Mat(480, 200, CvType.CV_8UC4);
+        finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
+
+        int aCols = mBgra.cols();
+        int aRows = mBgra.rows();
+
+        Imgproc.putText(curveMat,"Max Acel:aa", new Point(20,50),Core.FONT_HERSHEY_COMPLEX_SMALL,
+                1,new Scalar(170, 0, 180),2 );
+
+
         int centerIndex;
         if (!velDataList.isEmpty()) {
             maxVel = Collections.max(velDataList);
@@ -175,6 +188,8 @@ public class VideoProcessing extends Activity implements Runnable
         Double velValue = 0.0;
         Double velValueColor;
         int thickness;
+
+
 
         cameraVideo = new VideoWriter(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15.0, mBgra.size());
         cameraVideo.open(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15.0, mBgra.size());
@@ -229,6 +244,7 @@ public class VideoProcessing extends Activity implements Runnable
                     indexList++;
                     if (!velDataList.isEmpty())
                         velDataDeque.addFirst(velDataList.get(frameIndex));
+                        //velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
 
                 } else {    // Si la cola esta llena, se borra el elemento mas viejo y luego se agrega uno nuevo
                     centerPoint.removeLast();
@@ -236,6 +252,7 @@ public class VideoProcessing extends Activity implements Runnable
                     if (!velDataList.isEmpty()) {
                         velDataDeque.removeLast();
                         velDataDeque.addFirst(velDataList.get(frameIndex));
+                        //velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
                     }
                 }
 
@@ -267,22 +284,38 @@ public class VideoProcessing extends Activity implements Runnable
             }
             if (!velDataDeque.isEmpty())
                 velValue = velDataDeque.getFirst();
-            Imgproc.putText(mBgra,"Acelerometer Value:  ".concat(velValue.toString()) ,new Point(20,400),Core.FONT_HERSHEY_COMPLEX_SMALL,
-                    1,new Scalar(170, 0, 180),2 );
+            Imgproc.putText(mBgra,"Acelerometer Value:  ".concat(velValue.toString()) ,new Point(20,55),Core.FONT_HERSHEY_SIMPLEX,
+                    1,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Max Acel:  ".concat(maxVel.toString()),new Point(20,450),Core.FONT_HERSHEY_COMPLEX_SMALL,
-                    1,new Scalar(170, 0, 180),2 );
+            Imgproc.putText(mBgra,"Max Acel:  ".concat(maxVel.toString()),new Point(20,75),Core.FONT_HERSHEY_SIMPLEX,
+                    1,new Scalar(255, 255, 255),2 );
             firstIteration = true;
+
+
+            //List<Mat> src = Arrays.asList(mBgra, curveMat);
+           // Core.vconcat(src, finalMat);
+            // Se graba el video a un archivo
+            //cameraVideo.write(mBgra);
+
+          //  finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
+          //  mBgra.copyTo(finalMat.rowRange(0, aRows-1).colRange(0, aCols-1));
+            //curveMat.copyTo(finalMat.rowRange(0, aRows-1).colRange(aCols, finalMat.cols()));
+
             // Se graba el video a un archivo
             cameraVideo.write(mBgra);
             mBgra.release();
+            finalMat.release();
             frameIndex++;
         }
+        Log.i("VideoProcessing", "Termino el proc");
         cameraVideo.release();
         File tempFile = new File(filePath + "TEMP.avi");
         tempFile.delete();
         imgHSV.release();
         imgThresholded.release();
+        finalMat.release();
+        curveMat.release();
     }
+
 
 }
