@@ -57,6 +57,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     private BluetoothSocket btSocket = null;        // Socket para la comm
     private StringBuilder DataStringIn = new StringBuilder();
     CameraRecorder.ConnectedThread myConexionBt;
+    boolean connectionEstablished= false;
 
     private double velData = 0; // se guardan los ultimos 10 datos recibidos
     ArrayList<Double> velDataList = new ArrayList<Double>();
@@ -115,6 +116,8 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
                     DataStringIn.append(readMessage);
                     if(DataStringIn.charAt(DataStringIn.length() - 1) == '#'){ //Uso el caracter # para separar los datos
                         String dataInPrint = DataStringIn.substring(0, DataStringIn.length() - 1);
+                        if( dataInPrint == "Finish")
+                            finish();
                         IdBufferIn.setText(dataInPrint);  // Lo que llega por bluetooth lo mando al Idbufferin
                         velData = (Double.parseDouble(dataInPrint));
                         velDataList.add((Double.parseDouble(dataInPrint)));
@@ -126,6 +129,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
         });
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+
     }
 
 
@@ -154,11 +158,13 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     @Override
     public void finish() {
         super.finish();
-        Intent processIntent = new Intent(CameraRecorder.this, VideoProcessing.class);  // intent a la proxima activity
-        processIntent.putExtra("path", filePath);
-        processIntent.putExtra("velData", velDataList);
-        processIntent.putExtra("Index", velDataIndex);
-        startActivity(processIntent);
+        if(connectionEstablished) {
+            Intent processIntent = new Intent(CameraRecorder.this, VideoProcessing.class);  // intent a la proxima activity
+            processIntent.putExtra("path", filePath);
+            processIntent.putExtra("velData", velDataList);
+            processIntent.putExtra("Index", velDataIndex);
+            startActivity(processIntent);
+        }
     }
 
 
@@ -203,6 +209,8 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             }
             myConexionBt = new ConnectedThread(btSocket);
             myConexionBt.start(); // Agregar algo para cuando la conexion falla.
+            connectionEstablished = true;
+            myConexionBt.write("1");
         }
     }
 
