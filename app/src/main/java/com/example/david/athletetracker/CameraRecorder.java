@@ -62,6 +62,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     private double velData = 0; // se guardan los ultimos 10 datos recibidos
     ArrayList<Double> velDataList = new ArrayList<Double>();
     ArrayList<Integer> velDataIndex = new ArrayList<>();
+    String dataInPrint = new String();
 
 
     int contador= 0;
@@ -115,8 +116,8 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
                     String readMessage = (String) msg.obj;
                     DataStringIn.append(readMessage);
                     if(DataStringIn.charAt(DataStringIn.length() - 1) == '#'){ //Uso el caracter # para separar los datos
-                        String dataInPrint = DataStringIn.substring(0, DataStringIn.length() - 1);
-                        if( dataInPrint == "Finish")
+                        dataInPrint = DataStringIn.substring(0, DataStringIn.length() - 1);
+                        if( dataInPrint.equals("Finish"))
                             finish();
                         IdBufferIn.setText(dataInPrint);  // Lo que llega por bluetooth lo mando al Idbufferin
                         velData = (Double.parseDouble(dataInPrint));
@@ -158,7 +159,7 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     @Override
     public void finish() {
         super.finish();
-        if(connectionEstablished) {
+        if(connectionEstablished || address == null) {
             Intent processIntent = new Intent(CameraRecorder.this, VideoProcessing.class);  // intent a la proxima activity
             processIntent.putExtra("path", filePath);
             processIntent.putExtra("velData", velDataList);
@@ -210,7 +211,20 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             myConexionBt = new ConnectedThread(btSocket);
             myConexionBt.start(); // Agregar algo para cuando la conexion falla.
             connectionEstablished = true;
-            myConexionBt.write("1");
+            while( !dataInPrint.equals("Record") || !dataInPrint.equals("CalStart")){
+                Toast.makeText(getBaseContext(),"Esperando start o calibracion", Toast.LENGTH_LONG).show();
+            }
+            if(dataInPrint.equals("CalStart")){
+                while (dataInPrint.equals("CalEnd")){
+                    Toast.makeText(getBaseContext(),"Calibrando", Toast.LENGTH_LONG).show();
+                }
+            }
+            else {
+                myConexionBt.write("1");
+            }
+        }
+        else {
+            Toast.makeText(getBaseContext(), "Se accedio sin Bluetooth", Toast.LENGTH_LONG).show();
         }
     }
 

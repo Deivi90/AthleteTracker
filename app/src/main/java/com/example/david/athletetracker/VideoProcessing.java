@@ -284,11 +284,12 @@ public class VideoProcessing extends Activity implements Runnable
             }
             if (!velDataDeque.isEmpty())
                 velValue = velDataDeque.getFirst();
-            Imgproc.putText(mBgra,"Acelerometer Value:  ".concat(velValue.toString()) ,new Point(20,55),Core.FONT_HERSHEY_SIMPLEX,
-                    1,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Max Acel:  ".concat(maxVel.toString()),new Point(20,75),Core.FONT_HERSHEY_SIMPLEX,
-                    1,new Scalar(255, 255, 255),2 );
+            Imgproc.putText(mBgra,"Acelerometer Value:  ".concat(velValue.toString()) ,new Point(20,55),Core.FONT_HERSHEY_SIMPLEX ,
+                    0.5,new Scalar(255, 255, 255),2 );
+
+            Imgproc.putText(mBgra,"Max Acel:  ".concat(maxVel.toString()),new Point(20,75),Core.FONT_HERSHEY_SIMPLEX ,
+                    0.5,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
 
@@ -298,8 +299,7 @@ public class VideoProcessing extends Activity implements Runnable
             //cameraVideo.write(mBgra);
 
           //  finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
-          //  mBgra.copyTo(finalMat.rowRange(0, aRows-1).colRange(0, aCols-1));
-            //curveMat.copyTo(finalMat.rowRange(0, aRows-1).colRange(aCols, finalMat.cols()));
+          //  mBgrzeMat.copyTo(finalMat.rowRange(0, aRows-1).colRange(aCols, finalMat.cols()));
 
             // Se graba el video a un archivo
             cameraVideo.write(mBgra);
