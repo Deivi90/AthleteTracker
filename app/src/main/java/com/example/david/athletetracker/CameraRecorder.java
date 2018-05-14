@@ -63,10 +63,13 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     ArrayList<Double> velDataList = new ArrayList<Double>();
     ArrayList<Integer> velDataIndex = new ArrayList<>();
     String dataInPrint = new String();
+    private enum bluetoothMsg{
+        Finish, Record, CalStart, CalEnd;
+    }
+    boolean recording = false;
+    boolean calibration = false;
 
-
-    int contador= 0;
-
+    
     // Identificador unico de servicio
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String address = null;
@@ -112,25 +115,42 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
         //https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
         bluetoothIn = new Handler(new Handler.Callback() {
             public boolean handleMessage(Message msg) {
+
+                bluetoothMsg incommingMsg;
                 if (msg.what == handlerState) {
                     String readMessage = (String) msg.obj;
                     DataStringIn.append(readMessage);
                     if(DataStringIn.charAt(DataStringIn.length() - 1) == '#'){ //Uso el caracter # para separar los datos
                         dataInPrint = DataStringIn.substring(0, DataStringIn.length() - 1);
-                        if( dataInPrint.equals("Finish"))
-                            finish();
                         IdBufferIn.setText(dataInPrint);  // Lo que llega por bluetooth lo mando al Idbufferin
-                        velData = (Double.parseDouble(dataInPrint));
-                        velDataList.add((Double.parseDouble(dataInPrint)));
+                        if(Character.isDigit(dataInPrint.charAt(0))) {
+                            velData = (Double.parseDouble(dataInPrint));
+                            velDataList.add((Double.parseDouble(dataInPrint)));
+                        }
+                        else{
+                            incommingMsg = bluetoothMsg.valueOf(dataInPrint);
+                            switch (incommingMsg){
+                                case Finish:
+                                    finish();
+                                    break;
+                                case Record:
+                                    recording = true;
+                                    break;
+                                case CalStart:
+                                    calibration = true;
+                                    break;
+                                case CalEnd:
+                                    calibration = false;
+                                    break;
+                            }
+                        }
                         DataStringIn.delete(0, DataStringIn.length());
                     }
                 }
                 return false;
             }
-
         });
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-
     }
 
 
@@ -211,18 +231,9 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             myConexionBt = new ConnectedThread(btSocket);
             myConexionBt.start(); // Agregar algo para cuando la conexion falla.
             connectionEstablished = true;
-            while( !dataInPrint.equals("Record") || !dataInPrint.equals("CalStart")){
-                Toast.makeText(getBaseContext(),"Esperando start o calibracion", Toast.LENGTH_LONG).show();
-            }
-            if(dataInPrint.equals("CalStart")){
-                while (dataInPrint.equals("CalEnd")){
-                    Toast.makeText(getBaseContext(),"Calibrando", Toast.LENGTH_LONG).show();
-                }
-            }
-            else {
-                myConexionBt.write("1");
-            }
+
         }
+
         else {
             Toast.makeText(getBaseContext(), "Se accedio sin Bluetooth", Toast.LENGTH_LONG).show();
         }
@@ -263,12 +274,14 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             List<int[]> listFPS = javaCameraView.getSupportedRangeFPS();
             javaCameraView.setPreviewFPS(listFPS.get(listFPS.size()-1)[0]/1000, listFPS.get(listFPS.size()-1)[1]/1000 );
         }
+
     }
 
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
       //  Log.i(TAG, "onCameraFrame: Grabando");
+
         mTemp = inputFrame.rgba();
         if (cameraVideo == null) {
             cameraVideo = new VideoWriter(filePath + "TEMP.avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15, mTemp.size());
@@ -276,10 +289,19 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
             cameraVideo.open(filePath + "TEMP.avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15, mTemp.size());
             Log.i(TAG, "onCameraFrame: recordFilePath" + filePath);
         }
-        cameraVideo.write(mTemp);
-        contador++;
-        if(address != null)
-            velDataIndex.add(velDataList.size()-1);
+        if (recording) {
+            cameraVideo.write(mTemp);
+            if (address != null)
+                velDataIndex.add(velDataList.size() - 1);
+        }
+        else if(calibration){
+            Imgproc.putText(mTemp,"Calibrando....",new Point(200,300),Core.FONT_HERSHEY_SIMPLEX ,
+                    1,new Scalar(255, 255, 255),4 );
+        }
+        else{
+            Imgproc.putText(mTemp,"PressTart",new Point(320,240),Core.FONT_HERSHEY_SIMPLEX ,
+                    1,new Scalar(255, 255, 255),4 );
+        }
         return mTemp;
     }
 
@@ -336,4 +358,3 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
 
 
 }
-
