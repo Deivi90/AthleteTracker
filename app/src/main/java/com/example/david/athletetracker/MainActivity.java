@@ -15,7 +15,8 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     Button btnVideoList;
-    Dialog myDialog;
+    Button btnRecord;
+    //Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Defino cada uno de los elementos del layout
         btnVideoList = (Button) findViewById(R.id.btnVideoList);
-        myDialog = new Dialog(this);
+        btnRecord = (Button) findViewById(R.id.button);
+        //myDialog = new Dialog(this);
 
         //Funcion de los botones
         btnVideoList.setOnClickListener(new View.OnClickListener() {
@@ -34,8 +36,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(videoList);
             }
         });
-    }
 
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent videoList = new Intent(MainActivity.this, DispositivosBt.class);  // intent a la proxima activity
+                startActivity(videoList);
+            }
+        });
+
+    }
+/*
     // Defino un Popup que aparece cuando se apreta el boton Grabar
     public void ShowPopup(View v){
 
@@ -74,4 +85,7 @@ public class MainActivity extends AppCompatActivity {
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+
+    */
 }
+

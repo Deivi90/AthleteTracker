@@ -243,16 +243,16 @@ public class VideoProcessing extends Activity implements Runnable
                     centerPoint.addFirst(new Point(centerX, centerY));
                     indexList++;
                     if (!velDataList.isEmpty())
-                        velDataDeque.addFirst(velDataList.get(frameIndex));
-                        //velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
+                        //velDataDeque.addFirst(velDataList.get(frameIndex));
+                        velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
 
                 } else {    // Si la cola esta llena, se borra el elemento mas viejo y luego se agrega uno nuevo
                     centerPoint.removeLast();
                     centerPoint.addFirst(new Point(centerX, centerY));
                     if (!velDataList.isEmpty()) {
                         velDataDeque.removeLast();
-                        velDataDeque.addFirst(velDataList.get(frameIndex));
-                        //velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
+                        //velDataDeque.addFirst(velDataList.get(frameIndex));
+                        velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
                     }
                 }
 
@@ -269,15 +269,15 @@ public class VideoProcessing extends Activity implements Runnable
                 }
                 else {
                     thickness = (int)(Math.sqrt( CURVE_LENGHT / (centerIndex + 1)) * 3);
-                            if( velDataList.isEmpty())
-                                Imgproc.line(mBgra, initialPoint, finalPoint, LINE_COLOR, thickness);
-                            else{
-                                // El color de la curva va de amarillo a rojo a medida que aumenta la velocidad
-                                velValue = velDataIterator.next();
-                                velValueColor = velValue * 255/maxVel; // La velocidad va de 0 a 255
-                                velValueColor = Math.abs(velValueColor - 255); // La velocidad va de 255 a 0
-                                Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50,velValueColor,255), thickness);
-                            }
+                    if( velDataList.isEmpty())
+                        Imgproc.line(mBgra, initialPoint, finalPoint, LINE_COLOR, thickness);
+                    else{
+                        // El color de la curva va de amarillo a rojo a medida que aumenta la velocidad
+                        velValue = velDataIterator.next();
+                        velValueColor = velValue * 255/maxVel; // La velocidad va de 0 a 255
+                        velValueColor = Math.abs(velValueColor - 255); // La velocidad va de 255 a 0
+                        Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50,velValueColor,255), thickness);
+                    }
                     initialPoint = finalPoint;
                 }
                 centerIndex++;
@@ -294,12 +294,12 @@ public class VideoProcessing extends Activity implements Runnable
 
 
             //List<Mat> src = Arrays.asList(mBgra, curveMat);
-           // Core.vconcat(src, finalMat);
+            // Core.vconcat(src, finalMat);
             // Se graba el video a un archivo
             //cameraVideo.write(mBgra);
 
-          //  finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
-          //  mBgrzeMat.copyTo(finalMat.rowRange(0, aRows-1).colRange(aCols, finalMat.cols()));
+            //  finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
+            //  mBgrzeMat.copyTo(finalMat.rowRange(0, aRows-1).colRange(aCols, finalMat.cols()));
 
             // Se graba el video a un archivo
             cameraVideo.write(mBgra);

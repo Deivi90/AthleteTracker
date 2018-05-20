@@ -69,6 +69,8 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
     boolean recording = false;
     boolean calibration = false;
 
+    int calibrationCounter = 0;
+
     
     // Identificador unico de servicio
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -295,11 +297,21 @@ public class CameraRecorder extends AppCompatActivity implements CameraBridgeVie
                 velDataIndex.add(velDataList.size() - 1);
         }
         else if(calibration){
-            Imgproc.putText(mTemp,"Calibrando....",new Point(200,300),Core.FONT_HERSHEY_SIMPLEX ,
-                    1,new Scalar(255, 255, 255),4 );
+            if(calibrationCounter == 24)
+                calibrationCounter = 0;
+            if (calibrationCounter  >= 12)
+                Imgproc.putText(mTemp,"Calibrando..",new Point(200,240),Core.FONT_HERSHEY_SIMPLEX ,
+                        1,new Scalar(255, 255, 255),4 );
+            else if(calibrationCounter >= 6)
+                Imgproc.putText(mTemp,"Calibrando.",new Point(200,240),Core.FONT_HERSHEY_SIMPLEX ,
+                             1,new Scalar(255, 255, 255),4 );
+            else
+                Imgproc.putText(mTemp, "Calibrando", new Point(200, 240), Core.FONT_HERSHEY_SIMPLEX,
+                        1, new Scalar(255, 255, 255), 4);
+            calibrationCounter++;
         }
         else{
-            Imgproc.putText(mTemp,"PressTart",new Point(320,240),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mTemp,"Presione tecla para comenzar",new Point(100,240),Core.FONT_HERSHEY_SIMPLEX ,
                     1,new Scalar(255, 255, 255),4 );
         }
         return mTemp;
