@@ -168,6 +168,7 @@ public class VideoProcessing extends Activity implements Runnable
     private  void processVideo(){
 
         Double maxVel = 0.0;
+        Double avgVel = 0.0;
         mBgra = new Mat(480, 640, CvType.CV_8UC4);
         imgHSV = new Mat(480, 640, CvType.CV_8UC4);
         imgThresholded = new Mat(480, 640, CvType.CV_8UC4);
@@ -177,13 +178,14 @@ public class VideoProcessing extends Activity implements Runnable
         int aCols = mBgra.cols();
         int aRows = mBgra.rows();
 
-        Imgproc.putText(curveMat,"Max Acel:aa", new Point(20,50),Core.FONT_HERSHEY_COMPLEX_SMALL,
-                1,new Scalar(170, 0, 180),2 );
+        //Imgproc.putText(curveMat,"Max Acel:aa", new Point(20,50),Core.FONT_HERSHEY_COMPLEX_SMALL,
+           //     1,new Scalar(170, 0, 180),2 );
 
 
         int centerIndex;
         if (!velDataList.isEmpty()) {
             maxVel = Collections.max(velDataList);
+            //avgVel = Collections.
         }
         Double velValue = 0.0;
         Double velValueColor;
@@ -285,11 +287,16 @@ public class VideoProcessing extends Activity implements Runnable
             if (!velDataDeque.isEmpty())
                 velValue = velDataDeque.getFirst();
 
-            Imgproc.putText(mBgra,"Acelerometer Value:  ".concat(velValue.toString()) ,new Point(20,55),Core.FONT_HERSHEY_SIMPLEX ,
-                    0.5,new Scalar(255, 255, 255),2 );
+            Imgproc.rectangle(mBgra,new Point(0,0),new Point(mBgra.cols(),mBgra.rows()/6),new Scalar(0,0,0),-1);
 
-            Imgproc.putText(mBgra,"Max Acel:  ".concat(maxVel.toString()),new Point(20,75),Core.FONT_HERSHEY_SIMPLEX ,
-                    0.5,new Scalar(255, 255, 255),2 );
+            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
+                    1,new Scalar(255, 255, 255),2 );
+
+            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
+                    1,new Scalar(255, 255, 255),2 );
+
+            Imgproc.putText(mBgra,"Velocidad Máxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,70),Core.FONT_HERSHEY_SIMPLEX ,
+                    1,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
 
