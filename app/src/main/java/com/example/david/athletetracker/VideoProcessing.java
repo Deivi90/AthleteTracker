@@ -185,7 +185,11 @@ public class VideoProcessing extends Activity implements Runnable
         int centerIndex;
         if (!velDataList.isEmpty()) {
             maxVel = Collections.max(velDataList);
-            //avgVel = Collections.
+            for(int i=0; i< velDataList.size(); i++)
+            {
+                avgVel = velDataList.get(i) + avgVel;
+            }
+            avgVel = avgVel/ velDataList.size();
         }
         Double velValue = 0.0;
         Double velValueColor;
@@ -193,8 +197,8 @@ public class VideoProcessing extends Activity implements Runnable
 
 
 
-        cameraVideo = new VideoWriter(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15.0, mBgra.size());
-        cameraVideo.open(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 15.0, mBgra.size());
+        cameraVideo = new VideoWriter(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
+        cameraVideo.open(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
 
         videoToProcess = new VideoCapture(filePath + "TEMP.avi");
         while (videoToProcess.read(mBgra))      // mBgra esta en BGR
@@ -240,63 +244,66 @@ public class VideoProcessing extends Activity implements Runnable
                 // En la curva solo se grafican los ultimos "CURVE_LENGHT" puntos
                 // Estos puntos se guardan en la cola "centerPoint"
 
-                //Almacenamiento en la cola
-                if (indexList < CURVE_LENGHT) {     // Se almacenan los puntos hasta que se llene la cola
-                    centerPoint.addFirst(new Point(centerX, centerY));
-                    indexList++;
-                    if (!velDataList.isEmpty())
-                        //velDataDeque.addFirst(velDataList.get(frameIndex));
-                        velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
+                if (!centerX.isNaN()) {
+                    //Almacenamiento en la cola
+                    if (indexList < CURVE_LENGHT) {     // Se almacenan los puntos hasta que se llene la cola
+                        centerPoint.addFirst(new Point(centerX, centerY));
+                        indexList++;
+                        if (!velDataList.isEmpty())
+                            //velDataDeque.addFirst(velDataList.get(frameIndex));
+                            velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
 
-                } else {    // Si la cola esta llena, se borra el elemento mas viejo y luego se agrega uno nuevo
-                    centerPoint.removeLast();
-                    centerPoint.addFirst(new Point(centerX, centerY));
-                    if (!velDataList.isEmpty()) {
-                        velDataDeque.removeLast();
-                        //velDataDeque.addFirst(velDataList.get(frameIndex));
-                        velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
+                    } else {    // Si la cola esta llena, se borra el elemento mas viejo y luego se agrega uno nuevo
+                        centerPoint.removeLast();
+                        centerPoint.addFirst(new Point(centerX, centerY));
+                        if (!velDataList.isEmpty()) {
+                            velDataDeque.removeLast();
+                            //velDataDeque.addFirst(velDataList.get(frameIndex));
+                            velDataDeque.addFirst(velDataList.get(velDataIndex.get(frameIndex)));
+                        }
                     }
                 }
-
             }
-            centerIndex = 0 ;
-            if( ! velDataList.isEmpty())
-                velDataIterator = velDataDeque.iterator();
-            // Graficos de los puntos en la cola
-            for (Point center : centerPoint) {
-                finalPoint = center;
-                if ( firstIteration ){
-                    initialPoint = center;
-                    firstIteration = false;
-                }
-                else {
-                    thickness = (int)(Math.sqrt( CURVE_LENGHT / (centerIndex + 1)) * 3);
-                    if( velDataList.isEmpty())
-                        Imgproc.line(mBgra, initialPoint, finalPoint, LINE_COLOR, thickness);
-                    else{
-                        // El color de la curva va de amarillo a rojo a medida que aumenta la velocidad
-                        velValue = velDataIterator.next();
-                        velValueColor = velValue * 255/maxVel; // La velocidad va de 0 a 255
-                        velValueColor = Math.abs(velValueColor - 255); // La velocidad va de 255 a 0
-                        Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50,velValueColor,255), thickness);
+                centerIndex = 0;
+                if (!velDataList.isEmpty())
+                    velDataIterator = velDataDeque.iterator();
+                // Graficos de los puntos en la cola
+                for (Point center : centerPoint) {
+                    finalPoint = center;
+                    if (firstIteration) {
+                        initialPoint = center;
+                        firstIteration = false;
+                    } else {
+                        thickness = (int) (Math.sqrt(CURVE_LENGHT / (centerIndex + 1)) * 3);
+                        if (velDataList.isEmpty())
+                            Imgproc.line(mBgra, initialPoint, finalPoint, LINE_COLOR, thickness);
+                        else {
+                            // El color de la curva va de amarillo a rojo a medida que aumenta la velocidad
+                            velValue = velDataIterator.next();
+                            velValueColor = velValue * 255 / maxVel; // La velocidad va de 0 a 255
+                            velValueColor = Math.abs(velValueColor - 255); // La velocidad va de 255 a 0
+                            Imgproc.line(mBgra, initialPoint, finalPoint, new Scalar(50, velValueColor, 255), thickness);
+                        }
+                        initialPoint = finalPoint;
                     }
-                    initialPoint = finalPoint;
+                    centerIndex++;
                 }
-                centerIndex++;
-            }
+
+
+
             if (!velDataDeque.isEmpty())
                 velValue = velDataDeque.getFirst();
 
             Imgproc.rectangle(mBgra,new Point(0,0),new Point(mBgra.cols(),mBgra.rows()/6),new Scalar(0,0,0),-1);
 
-            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
-                    1,new Scalar(255, 255, 255),2 );
+            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()).substring(0,4) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
+                    0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
-                    1,new Scalar(255, 255, 255),2 );
+            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
+                    0.7,new Scalar(255, 255, 255),2 );
 
             Imgproc.putText(mBgra,"Velocidad Máxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,70),Core.FONT_HERSHEY_SIMPLEX ,
-                    1,new Scalar(255, 255, 255),2 );
+                    0.7,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
 
@@ -317,7 +324,7 @@ public class VideoProcessing extends Activity implements Runnable
         Log.i("VideoProcessing", "Termino el proc");
         cameraVideo.release();
         File tempFile = new File(filePath + "TEMP.avi");
-        tempFile.delete();
+        //tempFile.delete();
         imgHSV.release();
         imgThresholded.release();
         finalMat.release();
