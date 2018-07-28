@@ -234,7 +234,7 @@ public class VideoProcessing extends Activity implements Runnable
                         }
                     }
                 }
-                Imgproc.drawContours(mBgra, contours, maxAreaIndex, CONTOUR_COLOR, 4);
+                // Imgproc.drawContours(mBgra, contours, maxAreaIndex, CONTOUR_COLOR, 4);
                 // Se calcula el centro de masa del contorno para poder dibujar la trayectoria del mismo
                 contourMoments = Imgproc.moments(contours.get(maxAreaIndex));
                 // El centro es igual a Cx = (int(M["m10"] / M["m00"]),  Cy = int(M["m01"] / M["m00"]))
@@ -296,13 +296,13 @@ public class VideoProcessing extends Activity implements Runnable
 
             Imgproc.rectangle(mBgra,new Point(0,0),new Point(mBgra.cols(),mBgra.rows()/6),new Scalar(0,0,0),-1);
 
-            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()).substring(0,4) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()).substring(0,25),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Máxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,70),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad Maxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,70),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
