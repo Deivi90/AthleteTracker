@@ -36,8 +36,12 @@ public class VideoProcessing extends Activity implements Runnable
 
     // https://docs.opencv.org/3.2.0/df/d9d/tutorial_py_colorspaces.html
     // Rango de colores a filtrar (Azul)
-    Scalar lowHSV = new Scalar(89, 126, 167);
-    Scalar highHSV = new Scalar(126, 255, 255);
+    Scalar lowHSV = new Scalar(85, 25, 38);
+    Scalar highHSV = new Scalar(129, 255, 255);
+
+    //Scalar lowHSV = new Scalar(89, 126, 167);
+    // Scalar highHSV = new Scalar(126, 255, 255);
+
 
     // Inicializaciones para graficar contornos
     Double maxArea, Area;
@@ -45,7 +49,7 @@ public class VideoProcessing extends Activity implements Runnable
     int maxAreaIndex = 0;
     Scalar CONTOUR_COLOR = new Scalar(255,155,235);
 
-    // Inicianilaciones para graficar lineas
+    // Inicializaciones para graficar lineas
     Moments contourMoments;
     Double centerX;
     Double centerY;
@@ -64,6 +68,11 @@ public class VideoProcessing extends Activity implements Runnable
     ArrayList<Integer> velDataIndex = new ArrayList<>();
 
 
+    // Inicializaciones Progress View
+
+    int frameCounter = 0;
+    int maxFrames;
+
     //A ProgressDialog View
     private ProgressDialog progressDialog;
     //A thread, that will be used to execute code in parallel with the UI thread
@@ -80,6 +89,7 @@ public class VideoProcessing extends Activity implements Runnable
         filePath = getIntent().getStringExtra("path");
         velDataList = (ArrayList<Double>) getIntent().getSerializableExtra("velData");
         velDataIndex = getIntent().getIntegerArrayListExtra("Index");
+        maxFrames=velDataIndex.size();
 
         //Create a new progress dialog.
         progressDialog = new ProgressDialog(VideoProcessing.this);
@@ -99,7 +109,6 @@ public class VideoProcessing extends Activity implements Runnable
         progressDialog.setProgress(0);
         //Display the progress dialog.
         progressDialog.show();
-
         //Initialize the handler
         handler = new Handler();
         //Initialize the thread
@@ -123,7 +132,7 @@ public class VideoProcessing extends Activity implements Runnable
                 while(counter <= 4)
                 {
                     //Wait 850 milliseconds
-                    thread.wait(850);
+                    thread.wait(500);
                     //Increment the counter
                     counter++;
 
@@ -172,8 +181,8 @@ public class VideoProcessing extends Activity implements Runnable
         mBgra = new Mat(480, 640, CvType.CV_8UC4);
         imgHSV = new Mat(480, 640, CvType.CV_8UC4);
         imgThresholded = new Mat(480, 640, CvType.CV_8UC4);
-        curveMat = new Mat(480, 200, CvType.CV_8UC4);
-        finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
+       // curveMat = new Mat(480, 200, CvType.CV_8UC4);
+        // finalMat = new Mat(mBgra.rows(), mBgra.cols() +  curveMat.cols(), mBgra.type());
 
         int aCols = mBgra.cols();
         int aRows = mBgra.rows();
@@ -185,11 +194,12 @@ public class VideoProcessing extends Activity implements Runnable
         int centerIndex;
         if (!velDataList.isEmpty()) {
             maxVel = Collections.max(velDataList);
-            for(int i=0; i< velDataList.size(); i++)
+         /*   for(int i=0; i< velDataList.size(); i++)
             {
                 avgVel = velDataList.get(i) + avgVel;
             }
             avgVel = avgVel/ velDataList.size();
+         */
         }
         Double velValue = 0.0;
         Double velValueColor;
@@ -197,12 +207,13 @@ public class VideoProcessing extends Activity implements Runnable
 
 
 
-        cameraVideo = new VideoWriter(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
-        cameraVideo.open(filePath +".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
+        cameraVideo = new VideoWriter(filePath + maxVel.toString() + ".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
+        cameraVideo.open(filePath + maxVel.toString() + ".avi", VideoWriter.fourcc('M', 'J', 'P', 'G'), 10.0, mBgra.size());
 
         videoToProcess = new VideoCapture(filePath + "TEMP.avi");
         while (videoToProcess.read(mBgra))      // mBgra esta en BGR
         {
+            //frameCounter++;
             Log.i("VideoProcessing", "Lee un Mat");
 
             //https://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html
@@ -296,13 +307,13 @@ public class VideoProcessing extends Activity implements Runnable
 
             Imgproc.rectangle(mBgra,new Point(0,0),new Point(mBgra.cols(),mBgra.rows()/6),new Scalar(0,0,0),-1);
 
-            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,30),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,35),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()).substring(0,25),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
-                    0.7,new Scalar(255, 255, 255),2 );
+//            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()).substring(0,25),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
+  //                  0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Maxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,70),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad Maxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,60),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
@@ -318,17 +329,17 @@ public class VideoProcessing extends Activity implements Runnable
             // Se graba el video a un archivo
             cameraVideo.write(mBgra);
             mBgra.release();
-            finalMat.release();
+            //finalMat.release();
             frameIndex++;
         }
         Log.i("VideoProcessing", "Termino el proc");
         cameraVideo.release();
-        File tempFile = new File(filePath + "TEMP.avi");
-        //tempFile.delete();
         imgHSV.release();
         imgThresholded.release();
-        finalMat.release();
-        curveMat.release();
+        //finalMat.release();
+        //curveMat.release();
+        File tempFile = new File(filePath + "TEMP.avi");
+        tempFile.delete();
     }
 
 

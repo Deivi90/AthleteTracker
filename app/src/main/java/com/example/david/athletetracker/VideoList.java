@@ -22,6 +22,7 @@ public class VideoList extends AppCompatActivity {
 
     String date;
     String time;
+    String maxVel;
     String buffer;
     private  File path = new File(Environment.getExternalStorageDirectory() + "/Atlethe Tracker/");
     private  File[] files = path.listFiles();
@@ -47,7 +48,8 @@ public class VideoList extends AppCompatActivity {
                 // Los archivos se guardan con el formato "yyyyMMddHHmmSS.avi"
                 date = buffer.substring(0, 4) + "/" + buffer.substring(4, 6) + "/" + buffer.substring(6, 8);
                 time = buffer.substring(8, 10) + ":" + buffer.substring(10, 12) + ":" + buffer.substring(12, 14);
-                item.add(date + "\n" + time);
+                maxVel = "Max. Vel:  " + buffer.substring(14, 18);
+                item.add(date + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + "\t" + maxVel + "\n" + time);
             }
         }
 
