@@ -31,16 +31,19 @@ public class VideoProcessing extends Activity implements Runnable
     Mat mBgra,imgHSV, imgThresholded, finalMat, curveMat;
     int frameIndex=0;
 
+
+    Double constanteTramposa= 2.5;
+
     VideoWriter cameraVideo;
     VideoCapture videoToProcess;
 
     // https://docs.opencv.org/3.2.0/df/d9d/tutorial_py_colorspaces.html
     // Rango de colores a filtrar (Azul)
-    Scalar lowHSV = new Scalar(85, 25, 38);
-    Scalar highHSV = new Scalar(129, 255, 255);
+    //Scalar lowHSV = new Scalar(85, 25, 38);
+    //Scalar highHSV = new Scalar(129, 255, 255);
 
-    //Scalar lowHSV = new Scalar(89, 126, 167);
-    // Scalar highHSV = new Scalar(126, 255, 255);
+    Scalar lowHSV = new Scalar(89, 126, 167);
+    Scalar highHSV = new Scalar(126, 255, 255);
 
 
     // Inicializaciones para graficar contornos
@@ -193,7 +196,7 @@ public class VideoProcessing extends Activity implements Runnable
 
         int centerIndex;
         if (!velDataList.isEmpty()) {
-            maxVel = Collections.max(velDataList);
+            maxVel = Collections.max(velDataList) * constanteTramposa;
          /*   for(int i=0; i< velDataList.size(); i++)
             {
                 avgVel = velDataList.get(i) + avgVel;
@@ -301,19 +304,17 @@ public class VideoProcessing extends Activity implements Runnable
                 }
 
 
-
             if (!velDataDeque.isEmpty())
-                velValue = velDataDeque.getFirst();
-
+                velValue = velDataDeque.getFirst() * constanteTramposa;
             Imgproc.rectangle(mBgra,new Point(0,0),new Point(mBgra.cols(),mBgra.rows()/6),new Scalar(0,0,0),-1);
 
-            Imgproc.putText(mBgra,"Velocidad:  ".concat(velValue.toString()) ,new Point(mBgra.cols()/20 -20,35),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad:  " + (velValue.toString()).substring(0,3) + " m/s" ,new Point(mBgra.cols()/20 -20,35),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
 
 //            Imgproc.putText(mBgra,"Velocidad Promedio:  ".concat(avgVel.toString()).substring(0,25),new Point(mBgra.cols()/20 -20,50),Core.FONT_HERSHEY_SIMPLEX ,
   //                  0.7,new Scalar(255, 255, 255),2 );
 
-            Imgproc.putText(mBgra,"Velocidad Maxima:  ".concat(maxVel.toString()),new Point(mBgra.cols()/20 -20,60),Core.FONT_HERSHEY_SIMPLEX ,
+            Imgproc.putText(mBgra,"Velocidad Maxima:  " + maxVel.toString().substring(0,3) + " m/s",new Point(mBgra.cols()/20 -20,60),Core.FONT_HERSHEY_SIMPLEX ,
                     0.7,new Scalar(255, 255, 255),2 );
             firstIteration = true;
 
